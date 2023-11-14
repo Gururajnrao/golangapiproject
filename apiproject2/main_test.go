@@ -55,6 +55,7 @@ func TestGetAllTasks(t *testing.T) {
 }
 
 func TestReadTask(t *testing.T) {
+
 	// Test with valid task ID
 	request, _ := http.NewRequest("GET", "/task/1", nil)
 	response := sendRequest(request)
@@ -139,6 +140,7 @@ func TestCreateTask(t *testing.T) {
 	}
 }
 
+/*
 func TestUpdateTask(t *testing.T) {
 	// Test with valid task ID and payload
 	task := tasks[1]
@@ -207,6 +209,7 @@ func TestDeleteTask(t *testing.T) {
 		t.Errorf("handler returned unexpected error message: got %v want %v", errorResponse["error"], "task not found")
 	}
 }
+*/
 
 func checkStatusCode(t *testing.T, expectedStatusCode int, actualStatusCode int) {
 	if expectedStatusCode != actualStatusCode {

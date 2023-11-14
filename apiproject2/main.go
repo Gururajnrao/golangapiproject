@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -56,7 +57,7 @@ func sendResponse(w http.ResponseWriter, statusCode int, payload interface{}) {
 
 func sendError(w http.ResponseWriter, statusCode int, err string) {
 	errorMessage := map[string]string{"error": err}
-	sendResponse(w, statusCode, err)
+	sendResponse(w, statusCode, errorMessage)
 }
 
 func (app *App) getTasks(writer http.ResponseWriter, request *http.Request) {
@@ -69,11 +70,36 @@ func (app *App) getTasks(writer http.ResponseWriter, request *http.Request) {
 }
 
 func (app *App) createTask(writer http.ResponseWriter, r *http.Request) {
-	// your code goes here
+	var t Task
+	err := json.NewDecoder(r.Body).Decode(&t)
+	if err != nil {
+		sendError(writer, http.StatusBadRequest, "Invalid task Id")
+	}
+	err = t.createTask()
+	if err != nil {
+		sendError(writer, http.StatusInternalServerError, err.Error())
+
+	}
+	sendResponse(writer, http.StatusCreated, t)
+
 }
 
 func (app *App) readTask(writer http.ResponseWriter, request *http.Request) {
-	// your code goes here
+	vars := mux.Vars(request)
+	key, err := strconv.Atoi(vars["id"])
+	//fmt.Println("Key: ", key)
+	if err != nil {
+		sendError(writer, http.StatusBadRequest, "invalid task ID")
+		return
+	}
+	t := Task{ID: key}
+	err = t.getTask()
+	if err != nil {
+		sendError(writer, http.StatusNotFound, "task not found")
+		return
+	}
+	sendResponse(writer, http.StatusOK, t)
+
 }
 
 func (app *App) updateTask(writer http.ResponseWriter, request *http.Request) {

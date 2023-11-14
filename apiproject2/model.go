@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 func CreateInitialTasks() ([]Task, int) {
 	tasks := []Task{
 		{ID: 1, Name: "Create project proposal", Description: "Write a proposal for the new project", DueDate: "2022-02-01"},
@@ -24,13 +26,25 @@ func (t *Task) createTask() error {
 }
 
 func (t *Task) getTask() error {
-	// your code goes here
+	id := t.ID
+	for _, task := range tasks {
+		if task.ID == id {
+			t.Name = task.Name
+			t.Description = task.Description
+			t.DueDate = task.DueDate
+			return nil
+		}
+	}
+	return errors.New("task not found")
+
 }
 
 func (t *Task) updateTask() error {
 	// your code goes here
+	return nil
 }
 
 func (t *Task) deleteTask() error {
 	// your code goes here
+	return nil
 }
