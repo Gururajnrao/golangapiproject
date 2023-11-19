@@ -73,7 +73,8 @@ func (app *App) createTask(writer http.ResponseWriter, r *http.Request) {
 	var t Task
 	err := json.NewDecoder(r.Body).Decode(&t)
 	if err != nil {
-		sendError(writer, http.StatusBadRequest, "Invalid task Id")
+		sendError(writer, http.StatusBadRequest, "Invalid request payload")
+		return
 	}
 	err = t.createTask()
 	if err != nil {
@@ -103,7 +104,28 @@ func (app *App) readTask(writer http.ResponseWriter, request *http.Request) {
 }
 
 func (app *App) updateTask(writer http.ResponseWriter, request *http.Request) {
-	// your code goes here
+	vars := mux.Vars(request)
+	key, err := strconv.Atoi(vars["id"])
+	//fmt.Println("Key: ", key)
+	if err != nil {
+		sendError(writer, http.StatusBadRequest, "invalid task ID")
+		return
+	}
+	var t Task
+	err = json.NewDecoder(request.Body).Decode(&t)
+
+	if err != nil {
+		sendError(writer, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	t.ID = key
+	err = t.updateTask()
+	if err != nil {
+		sendError(writer, http.StatusInternalServerError, err.Error())
+		return
+
+	}
+	sendResponse(writer, http.StatusOK, t)
 }
 
 func (app *App) deleteTask(writer http.ResponseWriter, request *http.Request) {

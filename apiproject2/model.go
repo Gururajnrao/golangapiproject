@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 func CreateInitialTasks() ([]Task, int) {
 	tasks := []Task{
@@ -40,8 +43,21 @@ func (t *Task) getTask() error {
 }
 
 func (t *Task) updateTask() error {
-	// your code goes here
-	return nil
+	id := t.ID
+	for index, task := range tasks {
+		if task.ID == id {
+			fmt.Println("Entered here")
+			task.Name = t.Name
+			task.Description = t.Description
+			task.DueDate = t.DueDate
+			tasks[index] = task
+			fmt.Println(task)
+			fmt.Println(index)
+			return nil
+		}
+	}
+
+	return errors.New("task not found")
 }
 
 func (t *Task) deleteTask() error {

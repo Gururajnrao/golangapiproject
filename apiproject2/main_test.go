@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -128,19 +129,19 @@ func TestCreateTask(t *testing.T) {
 	}
 
 	// Test with invalid task payload
-	request, _ = http.NewRequest("POST", "/task", bytes.NewBuffer([]byte("invalid payload")))
+	request, _ = http.NewRequest("POST", "/task", bytes.NewBuffer([]byte("Invalid request payload")))
 	response = sendRequest(request)
 	checkStatusCode(t, http.StatusBadRequest, response.Code)
 
 	var errorResponse map[string]interface{}
 	json.Unmarshal(response.Body.Bytes(), &errorResponse)
+	fmt.Println("Error response: ", errorResponse["error"])
 
 	if errorResponse["error"] != "Invalid request payload" {
 		t.Errorf("handler returned unexpected error message: got %v want %v", errorResponse["error"], "Invalid request payload")
 	}
 }
 
-/*
 func TestUpdateTask(t *testing.T) {
 	// Test with valid task ID and payload
 	task := tasks[1]
@@ -184,6 +185,7 @@ func TestUpdateTask(t *testing.T) {
 	}
 }
 
+/*
 func TestDeleteTask(t *testing.T) {
 	// Test with valid task ID
 	request, _ := http.NewRequest("DELETE", "/task/3", nil)
